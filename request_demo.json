@@ -1,0 +1,41 @@
+# 创建数据库（通过，异步测试通过）
+curl -X POST "http://42.123.114.119:8598/create_database/birthdate"
+# 查询数据库是否存在（通过，异步测试通过）
+curl -X POST "http://42.123.114.119:8598/database_exists/birthdate"
+# 查询数据表是否存在（通过，异步测试通过）
+curl -X POST "http://42.123.114.119:8598/table_exists/" -H "Content-Type: application/json" -d '{"db_name": "birthdate","table_name": "user_bazi"}'
+# 查询数据表结构（通过，异步测试通过）
+curl -X POST "http://42.123.114.119:8598/get_table_structure/" -H "Content-Type: application/json" -d '{"db_name": "birthdate","table_name": "user_bazi"}'
+# 删除数据库（通过，异步测试通过）
+curl -X DELETE "http://42.123.114.119:8598/delete_database/birthdate"
+# 创建表（通过，异步测试通过）
+curl -X POST "http://42.123.114.119:8598/create_table/" -H "Content-Type: application/json" -d '{"db_name": "birthdate","table_name": "user_bazi","columns": "id TEXT PRIMARY KEY, year TEXT, month TEXT, day TEXT, clock TEXT, sex TEXT, bazi TEXT, time TEXT"}'
+curl -X POST "http://42.123.114.119:8598/create_table/" -H "Content-Type: application/json" -d '{"db_name": "dialogue","table_name": "user1_role1","columns": "dialogue_id TEXT PRIMARY KEY, user TEXT, assistant TEXT, time TEXT"}'
+# 删除表（通过，异步测试通过）
+curl -X DELETE "http://42.123.114.119:8598/delete_table/" -H "Content-Type: application/json" -d '{"db_name": "birthdate","table_name": "user_bazi"}'
+# 添加数据（通过，异步测试通过，time字段不在数据中体现，已在代码中添加）
+curl -X POST "http://42.123.114.119:8598/insert_data/" -H "Content-Type: application/json" -d '{"db_name": "birthdate","table_name": "user_bazi","columns": "id,year,month,day,clock,sex,bazi,time","values": "h8da90rgn,1996,8,9,17,男,甲乙丙丁戊己庚辛"}'
+curl -X POST "http://42.123.114.119:8598/insert_dialogue/" -H "Content-Type: application/json" -d '{"db_name": "dialogue","table_name": "user1_role1","columns": "dialogue_id,user,assistant,time","values": [[0,"你是谁啊","我是李白"],[1,"那你给我写首诗","别扯了，自己去查"],["2","那我要你何用","你猜"]]}'
+
+# 添加重要信息数据(通过)
+curl -X POST "http://42.123.114.119:8598/insert_important_inf/" -H "Content-Type: application/json" -d '{"db_name": "information","user_role_id": "user1_agent1","columns": "inf_id,inf","inf": "今天是我生日，我好开心"}'
+# 查询重要信息(通过)
+curl -X POST "http://42.123.114.119:8598/similar_search_inf/" -H "Content-Type: application/json" -d '{"db_name": "information","user_role_id": "user1_agent1","query": "天为什么是蓝色的"}'
+
+
+# 添加对话数据(通过)
+curl -X POST "http://42.123.114.119:8598/insert_dialogure/" -H "Content-Type: application/json" -d '{"db_name": "dialogure","user_role_id": "user1_role1","columns": "dialogue_id,user,assistant","dialog": [[],[]]}'
+# 相似搜索(通过)
+curl -X POST "http://42.123.114.119:8598/similar_search/" -H "Content-Type: application/json" -d '{"db_name": "dialogure","user_role_id": "user1_role1","query": "XXXXXXXXXXXX"}'
+
+# 更新数据（通过）
+curl -X PUT "http://42.123.114.119:8598/update_data/" -H "Content-Type: application/json" -d '{"db_name": "birthdate","table_name": "user_bazi","set_clause": "year = '1965'", "condition": "id=h8da90rjgn"}'
+# 查询数据（通过）
+curl -X POST "http://42.123.114.119:8598/select_data/" -H "Content-Type: application/json" -d '{"db_name": "birthdate","table_name": "user_bazi","condition": "id=h8da90rjgn"}'
+curl -X POST "http://42.123.114.119:8598/select_data/" -H "Content-Type: application/json" -d '{"db_name":"paipan_data_book","table_name":"paipan","condition":"DateTimeGender = '\''1998-06-19T5:00:00-男'\''"}'
+curl -X POST "http://42.123.114.119:8598/select_data/" -H "Content-Type: application/json" -d '{"db_name":"paipan_data_book","table_name":"paipan","condition":"DateTimeGender = '\''1998-06-19T5:00:00-男'\''", "sign": "True"}'
+
+# 删除数据（通过）
+curl -X DELETE "http://42.123.114.119:8598/delete_data/" -H "Content-Type: application/json" -d '{"db_name": "birthdate","table_name": "user_bazi","condition": "id=h8da90rjgn"}'
+
+
