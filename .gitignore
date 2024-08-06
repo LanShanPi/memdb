@@ -1,6 +1,8 @@
 memdb/db_domain/
 *.log
 *.out
+*.index
+*.db
 memdb/faiss_domain/faiss_index/
 __pycache__/
 file::*
