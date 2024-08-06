@@ -1,0 +1,5 @@
+memdb/db_domain/
+*.log
+*.out
+memdb/faiss_domain/faiss_index/
+__pycache__/
