@@ -5,6 +5,7 @@ import os
 from config import *
 import logging
 from embd_domain.emb_text_v2 import EmbeddingService
+from spacy_domain.spacy_server import spacy_process
 from faiss_domain.faiss_process import *
 import aiosqlite
 from typing import List, Any, Dict
@@ -17,6 +18,7 @@ logging.basicConfig(
     handlers=[logging.StreamHandler()]  # 设定输出到控制台
 )
 emb_model = EmbeddingService()
+spacy_processer = spacy_process()
 
 # 检查数据库是否存在
 async def database_exists(db_name: str) -> bool:
@@ -393,6 +395,11 @@ async def similar_search_inf(user_role_id: str, query: str, db_name: str):
     # 查询重要信息
     # 首先进行向量化
     emb = await emb_model.embedding_query(data=[query])
+    # 获取query中的时间词，用以确定数据索引时间范围
+    time_words = spacy_processer.get_time_text(query)
+    if time_words:
+        for time in time_words:
+            pass
     # 相似度检索，距离和索引的数据格式为：[[]]
     try:
         distances, indexs = simi_search(user_role_id, emb[0])

@@ -24,3 +24,4 @@ class spacy_process:
 
     def get_plan(self,query=None):
         pass
+
