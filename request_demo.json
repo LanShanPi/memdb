@@ -18,7 +18,7 @@ curl -X POST "http://42.123.114.119:8598/insert_data/" -H "Content-Type: applica
 curl -X POST "http://42.123.114.119:8598/insert_dialogue/" -H "Content-Type: application/json" -d '{"db_name": "dialogue","table_name": "user1_role1","columns": "dialogue_id,user,assistant,time","values": [[0,"你是谁啊","我是李白"],[1,"那你给我写首诗","别扯了，自己去查"],["2","那我要你何用","你猜"]]}'
 
 # 添加重要信息数据(通过)
-curl -X POST "http://42.123.114.119:8598/insert_important_inf/" -H "Content-Type: application/json" -d '{"db_name": "information","user_role_id": "user1_agent1","columns": "inf_id,inf","inf": "今天是我生日，我好开心"}'
+curl -X POST "http://42.123.114.119:8598/insert_important_inf/" -H "Content-Type: application/json" -d '{"db_name": "information","user_role_id": "user1_agent1","columns": "inf_id,inf,time","inf": "今天是我生日，我好开心"}'
 # 查询重要信息(通过)
 curl -X POST "http://42.123.114.119:8598/similar_search_inf/" -H "Content-Type: application/json" -d '{"db_name": "information","user_role_id": "user1_agent1","query": "天为什么是蓝色的"}'
 
@@ -38,4 +38,5 @@ curl -X POST "http://42.123.114.119:8598/select_data/" -H "Content-Type: applica
 # 删除数据（通过）
 curl -X DELETE "http://42.123.114.119:8598/delete_data/" -H "Content-Type: application/json" -d '{"db_name": "birthdate","table_name": "user_bazi","condition": "id=h8da90rjgn"}'
 
-
+# 判断信息重要性
+curl --location 'http://42.123.114.119:8597/chat/' --header 'Content-Type: application/json' --data '{"input":"昨天我去了虹口体育场"}'

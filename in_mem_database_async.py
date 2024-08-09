@@ -399,7 +399,8 @@ async def similar_search_inf(user_role_id: str, query: str, db_name: str):
     emb = await emb_model.embedding_query(data=[query])
 
     # 获取query中的时间词，用以确定数据索引时间范围
-    time_words = spacy_processer.get_time_text(query)
+    # time_words = spacy_processer.get_time_text(query)
+    time_words = []
     if time_words:
         # time_scope 格式为[[start_time,end_time],[]]
         time_scope = get_time_scope(time_words)
