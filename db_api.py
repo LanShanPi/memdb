@@ -4,7 +4,6 @@ from typing import List, Any
 import os
 import database as db
 import uvicorn
-from db_init import initialize_all_memory_dbs
 import logging
 import config
 

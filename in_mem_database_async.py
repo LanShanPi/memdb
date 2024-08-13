@@ -10,7 +10,7 @@ from faiss_domain.faiss_process import *
 import aiosqlite
 from typing import List, Any, Dict
 from db_init import get_memory_db_pool,initialize_memory_db,delete_memory_db,memory_db_pools
-from functional_function import get_time,get_time_scope
+from functional_function import get_time,get_time_scope,replace_dates_in_sentence
 
 logging.basicConfig(
     level=logging.INFO,  # 确保日志级别设置为INFO
@@ -359,6 +359,8 @@ async def insert_important_inf(db_name: str, user_id: str, columns: str, value: 
         rows = await get_table_row_count(db_name, user_id)
         # 获取时间
         _time = get_time()
+        # 修正句子中关于时间的词
+        value = replace_dates_in_sentence(value)
         placeholders = ', '.join(['?' for _ in [rows, value, _time]])
 
         # 数据存入磁盘数据库
@@ -396,6 +398,8 @@ async def similar_search_inf(user_role_id: str, query: str, db_name: str):
     
     # 查询重要信息
     # 首先进行向量化
+    # 修正关于时间的词
+    query = replace_dates_in_sentence(query)
     emb = await emb_model.embedding_query(data=[query])
 
     # 获取query中的时间词，用以确定数据索引时间范围
