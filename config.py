@@ -8,20 +8,17 @@ Embedding_Model_Path = "/home/kuaipan/model/bgelarge/bge-large-zh-v1.5"
 Faiss_Index_Path = "/home/kuaipan/memdb/faiss_domain/faiss_index/"
 # Top K
 Topk = 3
+# openai 跳板机地址
+Base_Url='http://8.209.215.15/api/openai/v1'
+# openai key
+Api_Key=""
+
+
 
 # 获取数据库地址
 def get_db_path(db_name):
     return Database_Root_Path+db_name+".db"
-
-# # 数据库路径
-# db_paths = {
-#     "birthdate": "/home/kuaipan/memdb/db_domain/birthdate.db",
-#     "dialogue": "/home/kuaipan/memdb/db_domain/dialogue.db",
-#     "information": "/home/kuaipan/memdb/db_domain/information.db",
-#     "paipan_data_book": "/home/kuaipan/memdb/db_domain/paipan_data_book.db",
-# }
-
-
+# 服务于内存数据库初始化
 def get_db_inf():
     db_paths = {}
     directory_path = "/home/kuaipan/memdb/db_domain/"

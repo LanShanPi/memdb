@@ -1,0 +1,37 @@
+---
+# restart: "no": 不会自动重启容器。
+# restart: always: 无论退出原因是什么，都会自动重启容器。
+# restart: on-failure: 仅在容器因非零退出代码失败时重启容器。
+# restart: on-failure:3: 仅在容器因非零退出代码失败时重启容器，且重启3次。
+# restart: unless-stopped: 无论退出原因是什么都会重启，除非你手动停止容器。
+# QUERY_DEFAULTS_LIMIT: 25，查询时若没有设置返回条数，则默认返回25条
+
+services:
+  weaviate:
+    command:
+    - --host
+    - 0.0.0.0
+    - --port
+    - '8080'
+    - --scheme
+    - http
+    image: cr.weaviate.io/semitechnologies/weaviate:1.26.1
+    ports:
+    - 8080:8080
+    - 50051:50051
+    volumes:
+    - /home/kuaipan/memdb/weaviate_domain/data:/var/lib/weaviate
+    restart: unless-stopped
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      # 不使用veaviate默认的编码模型
+      # DEFAULT_VECTORIZER_MODULE: 'none'
+      # ENABLE_MODULES: ''
+      # 使用本地模型text2vec-base-chinese
+      TRANSFORMERS_INFERENCE_API: http://localhost:12306/embed
+      CLUSTER_HOSTNAME: 'node1'
+volumes:
+  weaviate_data:
+...

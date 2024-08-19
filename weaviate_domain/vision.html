@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Network Graph with D3.js and Three.js</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/controls/OrbitControls.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("Starting fetch request...");
+
+    fetch('http://localhost:8593/api/data')  // 使用你的后端 API URL
+        .then(response => {
+            console.log("Response received:", response);
+            return response.json();
+        })
+        .then(data => {
+            console.log("Fetched data:", data);
+
+            // D3 Force Layout
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            const simulation = d3.forceSimulation(data.nodes)
+                .force("link", d3.forceLink(data.links).id(d => d.id).distance(150))
+                .force("charge", d3.forceManyBody().strength(-500))
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .stop();
+
+            // Run simulation to set positions for nodes
+            for (let i = 0; i < 300; i++) simulation.tick();
+
+            // Convert positions from D3 to Three.js format
+            const nodes = data.nodes.map(node => {
+                return {
+                    ...node,
+                    x: node.x - width / 2,
+                    y: node.y - height / 2,
+                    z: (Math.random() - 0.5) * 800
+                };
+            });
+
+            const links = data.links.map(link => {
+                return {
+                    source: nodes.find(n => n.id === link.source),
+                    target: nodes.find(n => n.id === link.target)
+                };
+            });
+
+            // Three.js Setup
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, width / height, 1, 5000);
+            camera.position.set(0, 0, 1500);  // 调整相机位置
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.body.appendChild(renderer.domElement);
+
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+            // 添加一个测试立方体
+            const cubeGeometry = new THREE.BoxGeometry(100, 100, 100);
+            const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+            scene.add(cube);
+
+            // Add nodes to the scene
+            nodes.forEach(node => {
+                const geometry = new THREE.SphereGeometry(20, 32, 32);
+                const material = new THREE.MeshBasicMaterial({ color: node.group === 1 ? 0xff0000 : 0x00aaff });
+                const sphere = new THREE.Mesh(geometry, material);
+                sphere.position.set(node.x, node.y, node.z);
+                node.sphere = sphere;
+                scene.add(sphere);
+            });
+
+            // Add links to the scene
+            links.forEach(link => {
+                const material = new THREE.LineBasicMaterial({ color: 0xaaaaaa });
+                const geometry = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(link.source.x, link.source.y, link.source.z),
+                    new THREE.Vector3(link.target.x, link.target.y, link.target.z)
+                ]);
+                const line = new THREE.Line(geometry, material);
+                scene.add(line);
+            });
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+                console.log("Rendering frame...");
+            }
+
+            animate();
+        })
+        .catch(error => {
+            console.error("Fetch error:", error);
+        });
+});
+</script>
+</body>
+</html>

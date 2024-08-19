@@ -10,7 +10,9 @@ from faiss_domain.faiss_process import *
 import aiosqlite
 from typing import List, Any, Dict
 from db_init import get_memory_db_pool,initialize_memory_db,delete_memory_db,memory_db_pools
-from functional_function import get_time,get_time_scope
+from functional_function import get_time,replace_dates_in_sentence
+from llm_domain import openai_llm
+from prompt_domain.llm_propmt import Judge_System
 
 logging.basicConfig(
     level=logging.INFO,  # 确保日志级别设置为INFO
@@ -345,8 +347,14 @@ async def similar_search(user_role_id: str, query: str, db_name: str) -> List[An
 
 # 向内存数据库中插入重要信息
 async def insert_important_inf(db_name: str, user_id: str, columns: str, value: str):
+    """
+    # 判断信息重要性，以此来判断是否需要进行存储
+    inf_important_or_not = openai_llm(value,Judge_System)
+    if "无重要信息" in inf_important_or_not:
+        return False,"对话无重要信息不进行存储"
+    """
+    
     pool = await get_memory_db_pool(db_name)
-
     # 检查内存中表是否存在
     if not await memory_table_exists(pool, user_id):
         logging.error(f"内存数据库 {db_name} 中不存在表 {user_id}。")
@@ -359,6 +367,8 @@ async def insert_important_inf(db_name: str, user_id: str, columns: str, value: 
         rows = await get_table_row_count(db_name, user_id)
         # 获取时间
         _time = get_time()
+        # 修正句子中关于时间的词
+        value = replace_dates_in_sentence(value)
         placeholders = ', '.join(['?' for _ in [rows, value, _time]])
 
         # 数据存入磁盘数据库
@@ -396,8 +406,12 @@ async def similar_search_inf(user_role_id: str, query: str, db_name: str):
     
     # 查询重要信息
     # 首先进行向量化
+    # 修正关于时间的词
+    query = replace_dates_in_sentence(query)
     emb = await emb_model.embedding_query(data=[query])
 
+    """
+    # 暂时废弃
     # 获取query中的时间词，用以确定数据索引时间范围
     # time_words = spacy_processer.get_time_text(query)
     time_words = []
@@ -409,7 +423,7 @@ async def similar_search_inf(user_role_id: str, query: str, db_name: str):
             try:
                 async with memory_db.cursor() as cursor:
                     # 创建查询语句，选择在日期范围内的所有记录
-                    search_query = f"""SELECT * FROM {user_role_id}WHERE time BETWEEN ? AND ?ORDER BY timestamp"""
+                    search_query = f"SELECT * FROM {user_role_id}WHERE time BETWEEN ? AND ?ORDER BY timestamp"
                     # 执行查询，传递开始和结束日期作为参数
                     await cursor.execute(search_query, (time_scope[0][0], time_scope[0][1]))
                     # 获取结果，格式为 [(inf_id, inf, ...), (...), ...]
@@ -426,7 +440,8 @@ async def similar_search_inf(user_role_id: str, query: str, db_name: str):
                 logging.info("在内存数据表中搜索指定时间段内的数据操作完成，释放内存数据库链接进链接池")
             # return先放在这
             return True, response
-    
+    """
+
     # 若没有时间相关的词，就进行全数据表索引
     # 相似度检索，距离和索引的数据格式为：[[]]
     try:
@@ -435,7 +450,6 @@ async def similar_search_inf(user_role_id: str, query: str, db_name: str):
     except:
         return False, []
 
-    
     # 进行全数据表批量查询
     memory_db = await pool.acquire()
     try:
