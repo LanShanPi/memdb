@@ -19,7 +19,10 @@ def get_time_scope(time_words):
         start_time = (now - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
         end_time = start_time + timedelta(days=1)
         result.append([start_time.strftime('%Y-%m-%d %H:%M:%S'),end_time.strftime('%Y-%m-%d %H:%M:%S')])
+<<<<<<< HEAD
     # 格式为[[start_time,end_time],[]]
+=======
+>>>>>>> 4354fe1a006e05a8294cd9db047fc0224262cf96
     return result
 
 
