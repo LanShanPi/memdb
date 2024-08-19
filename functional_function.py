@@ -98,6 +98,25 @@ def parse_day_of_current_month(day):
     today = datetime.now()
     return datetime(today.year, today.month, day)
 
+# 解析“上个月”、“下个月”这种表达
+def parse_month_reference(reference):
+    today = datetime.now()
+    year = today.year
+    month = today.month
+
+    if reference == '上':
+        month -= 1
+        if month < 1:
+            month = 12
+            year -= 1
+    elif reference == '下':
+        month += 1
+        if month > 12:
+            month = 1
+            year += 1
+
+    return year, month
+
 # 解析“上个月X号”格式
 def parse_last_month_day(day):
     today = datetime.now()
@@ -210,6 +229,12 @@ def replace_dates_in_sentence(sentence):
         day = int(chinese_to_digit(match.group(1)))
         date = parse_day_of_current_month(day)
         sentence = re.sub(r"[一二三四五六七八九十\d]+号", date.strftime('%Y年%m月%d日'), sentence)
+    # 匹配“上个月”、“下个月”
+    match = re.search(r"(上|下)个月", sentence)
+    if match:
+        reference = match.group(1)
+        year, month = parse_month_reference(reference)
+        sentence = re.sub(r"(上|下)个月", f"{year}年{month}月", sentence)
 
     # 匹配“周末”、“上周末”、“下周末”
     match = re.search(r"(上|下)?周末", sentence)
