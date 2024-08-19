@@ -10,7 +10,7 @@ Faiss_Index_Path = "/home/kuaipan/memdb/faiss_domain/faiss_index/"
 Topk = 3
 # openai 跳板机地址
 Base_Url='http://8.209.215.15/api/openai/v1'
-# openai key
+# openai key 推送git时要将key删掉
 Api_Key=""
 
 
