@@ -10,13 +10,12 @@ from faiss_domain.faiss_process import *
 import aiosqlite
 from typing import List, Any, Dict
 from db_init import get_memory_db_pool,initialize_memory_db,delete_memory_db,memory_db_pools
-<<<<<<< HEAD
+
 from functional_function import get_time,replace_dates_in_sentence
 from llm_domain import openai_llm
 from prompt_domain.llm_propmt import Judge_System
-=======
 from functional_function import get_time,get_time_scope,replace_dates_in_sentence
->>>>>>> 4354fe1a006e05a8294cd9db047fc0224262cf96
+
 
 logging.basicConfig(
     level=logging.INFO,  # 确保日志级别设置为INFO
@@ -357,7 +356,7 @@ async def insert_important_inf(db_name: str, user_id: str, columns: str, value: 
     if "无重要信息" in inf_important_or_not:
         return False,"对话无重要信息不进行存储"
     """
-    
+
     pool = await get_memory_db_pool(db_name)
     # 检查内存中表是否存在
     if not await memory_table_exists(pool, user_id):
