@@ -360,54 +360,68 @@
 # print(response.text)
 
 
+# import random
+# def main(arg):
+#     prompt = "你是role1，你现在要扮演一个捧哏的角色，根据role2为用户的测算面向用户说一些附和的话，下面是测算内容："
+#     if arg.split("：") == "财宝仙翁":
+#         role_list = ["学运仙子","前程仙官","桃花仙子","灵啊"]
+#         num_elements = random.randint(0, 1)
+#         result = random.sample(role_list, num_elements)
+#         if result:
+#             return {
+#                 "prompt":prompt.replace("role1",result[0]).replace("role2","财宝仙翁")
+#                 }
+#         else:
+#             return {
+#                 "prompt":None
+#                 }
+#     elif arg.split("：") == "学运仙子":
+#         role_list = ["财宝仙翁","前程仙官","桃花仙子","灵啊"]
+#         num_elements = random.randint(0, 1)
+#         result = random.sample(role_list, num_elements)
+#         if result:
+#             return {
+#                 "prompt":prompt.replace("role1",result[0]).replace("role2","学运仙子")
+#                 }
+#         else:
+#             return {
+#                 "prompt":None
+#                 }
+#     elif arg.split("：") == "前程仙官":
+#             role_list = ["财宝仙翁","学运仙子","桃花仙子","灵啊"]
+#             num_elements = random.randint(0, 1)
+#             result = random.sample(role_list, num_elements)
+#             if result:
+#                 return {
+#                     "prompt":prompt.replace("role1",result[0]).replace("role2","前程仙官")
+#                     }
+#             else:
+#                 return {
+#                     "prompt":None
+#                     }
+#     elif arg.split("：") == "桃花仙子":
+#         role_list = ["财宝仙翁","前程仙官","学运仙子","灵啊"]
+#         num_elements = random.randint(0, 1)
+#         result = random.sample(role_list, num_elements)
+#         if result:
+#             return {
+#                 "prompt":prompt.replace("role1",result[0]).replace("role2","桃花仙子")
+#                 }
+#         else:
+#             return {
+#                 "prompt":None
+#                 }
+
 import random
-def main(arg):
-    prompt = "你是role1，你现在要扮演一个捧哏的角色，根据role2为用户的测算面向用户说一些附和的话，下面是测算内容："
-    if arg.split("：") == "财宝仙翁":
-        role_list = ["学运仙子","前程仙官","桃花仙子","灵啊"]
-        num_elements = random.randint(0, 1)
-        result = random.sample(role_list, num_elements)
-        if result:
-            return {
-                "prompt":prompt.replace("role1",result[0]).replace("role2","财宝仙翁")
-                }
-        else:
-            return {
-                "prompt":None
-                }
-    elif arg.split("：") == "学运仙子":
-        role_list = ["财宝仙翁","前程仙官","桃花仙子","灵啊"]
-        num_elements = random.randint(0, 1)
-        result = random.sample(role_list, num_elements)
-        if result:
-            return {
-                "prompt":prompt.replace("role1",result[0]).replace("role2","学运仙子")
-                }
-        else:
-            return {
-                "prompt":None
-                }
-    elif arg.split("：") == "前程仙官":
-            role_list = ["财宝仙翁","学运仙子","桃花仙子","灵啊"]
-            num_elements = random.randint(0, 1)
-            result = random.sample(role_list, num_elements)
-            if result:
-                return {
-                    "prompt":prompt.replace("role1",result[0]).replace("role2","前程仙官")
-                    }
-            else:
-                return {
-                    "prompt":None
-                    }
-    elif arg.split("：") == "桃花仙子":
-        role_list = ["财宝仙翁","前程仙官","学运仙子","灵啊"]
-        num_elements = random.randint(0, 1)
-        result = random.sample(role_list, num_elements)
-        if result:
-            return {
-                "prompt":prompt.replace("role1",result[0]).replace("role2","桃花仙子")
-                }
-        else:
-            return {
-                "prompt":None
-                }
+
+def random_selection(lst):
+    # 根据指定概率选择0或1
+    num_elements = random.choices([0, 1], weights=[0.4, 0.6])[0]
+    return random.sample(lst, num_elements)
+
+# 示例列表
+my_list = ['元素1', '元素2', '元素3', '元素4']
+
+# 随机选择0或1个元素
+selected_elements = random_selection(my_list)
+print(selected_elements)
