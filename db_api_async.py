@@ -110,20 +110,25 @@ async def delete_data(schema: DeleteDataSchema):
 async def select_data(schema: QueryDataSchema):
     if "id" in schema.condition:
         schema.condition = f"id = \"{schema.condition.split('=')[1]}\""
-    print(schema.condition)
+    logging.info(f"查询条件为：{schema.condition}")
     mark, results = await db.select_data(schema.db_name, schema.table_name, schema.condition)
     if mark:
         if results:
             if "Gender" in schema.condition:
                 # 针对直接查询数据库八字的情况
                 if schema.sign:
+                    logging.info(f"返回数据为:{results[0][3]}")
                     return {"data": results[0][3]}
                 else:
+                    logging.info(f"返回数据为:{results[0][2]}")
                     return {"data": results[0][2]}
+            logging.info(f"返回数据为:{results}")
             return {"data": results}
         else:
+            logging.info(f"返回信息为:No {schema.condition} information found in data table {schema.table_name}")
             return {"message": f"No {schema.condition} information found in data table {schema.table_name}"}
     else:
+        logging.info(f"返回信息为:The table {schema.table_name} not exist in database {schema.db_name}.")
         return {"message": f"The table {schema.table_name} not exist in database {schema.db_name}."}
 
 #################################################################
