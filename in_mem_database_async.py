@@ -14,7 +14,7 @@ from db_init import get_memory_db_pool,initialize_memory_db,delete_memory_db,mem
 from functional_function import get_time,replace_dates_in_sentence
 from llm_domain import openai_llm
 from prompt_domain.llm_propmt import Judge_System
-from functional_function import get_time,get_time_scope,replace_dates_in_sentence
+from functional_function import get_time,get_time_scope,replace_dates_in_sentence,imformation_processer
 
 
 logging.basicConfig(
@@ -39,7 +39,7 @@ async def table_exists(db_name: str, table_name: str) -> bool:
         await cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table_name,))
         return await cursor.fetchone() is not None
 
-
+# 检查内存数据库是否存在
 async def memory_table_exists(pool, table_name: str) -> bool:
     memory_db = await pool.acquire()
     try:
@@ -69,6 +69,7 @@ async def create_database(db_name: str):
         logging.info(f"数据库 {db_name} 已添加至内存")
         return True
 
+# 删除数据库
 async def delete_database(db_name: str):
     db_path = get_db_path(db_name)
     if await database_exists(db_name):
@@ -175,6 +176,7 @@ async def insert_data(db_name: str, table_name: str, columns: str, values: str):
         logging.warning(f"数据表 {table_name} 不存在于数据库 {db_name} 中")
         return False
 
+# 确保内存数据库已经初始化
 async def ensure_memory_db_initialized(db_name: str):
     """确保内存数据库池已初始化"""
     pool = memory_db_pools.get(db_name)
@@ -185,7 +187,6 @@ async def ensure_memory_db_initialized(db_name: str):
             await initialize_memory_db(disk_db_path, db_name)
         else:
             raise ValueError(f"Database {db_name} does not exist on disk.")
-
 
 # 查询指定表中的数据
 async def select_data(db_name: str, table_name: str, condition: str = "") -> List[Any]:
@@ -348,7 +349,7 @@ async def similar_search(user_role_id: str, query: str, db_name: str) -> List[An
 
     return True, response
 
-# 向内存数据库中插入重要信息
+# 向内存数据库中插入重要信息，服务于大模型记忆
 async def insert_important_inf(db_name: str, user_id: str, columns: str, value: str):
     """
     # 判断信息重要性，以此来判断是否需要进行存储
@@ -356,12 +357,17 @@ async def insert_important_inf(db_name: str, user_id: str, columns: str, value: 
     if "无重要信息" in inf_important_or_not:
         return False,"对话无重要信息不进行存储"
     """
+    
+    # 首先进行数据处理，包括判断诗句是否需要存储，若需要存储则进行补充拼接，时间修正
+    mark,value = imformation_processer(user_id,value)
+    if not mark:
+        return False,"Non-important information is not stored."
 
     pool = await get_memory_db_pool(db_name)
     # 检查内存中表是否存在
     if not await memory_table_exists(pool, user_id):
         logging.error(f"内存数据库 {db_name} 中不存在表 {user_id}。")
-        return False
+        return False,f"The table {user_id} not exist in dataset {db_name}."
 
     # 总结的重要信息插入
     if await table_exists(db_name, user_id):
@@ -371,7 +377,7 @@ async def insert_important_inf(db_name: str, user_id: str, columns: str, value: 
         # 获取时间
         _time = get_time()
         # 修正句子中关于时间的词
-        value = replace_dates_in_sentence(value)
+        # value = replace_dates_in_sentence(value)
         placeholders = ', '.join(['?' for _ in [rows, value, _time]])
 
         # 数据存入磁盘数据库
@@ -395,22 +401,22 @@ async def insert_important_inf(db_name: str, user_id: str, columns: str, value: 
             logging.info("释放内存数据库连接，将连接返回连接池。")
         # 将对话进行向量化并存入 faiss
         await emb_model.inf_2_vec(user_id, [value])
-        return True
+        return True,"Data storage success."
     else:
         logging.error(f"磁盘数据库 {db_name} 中不存在表 {user_id}。")
-        return False
+        return False,f"The table {user_id} not exist in database {db_name}, you can create it first."
     
-# 相似度搜索重要信息
+# 相似度搜索重要信息，服务于大模型记忆
 async def similar_search_inf(user_role_id: str, query: str, db_name: str):
     response = []
     pool = await get_memory_db_pool(db_name)
     if not await table_exists(db_name, user_role_id):
-        return False, response
+        return False, f"The table {user_role_id} not exist in dataset {db_name}."
     
     # 查询重要信息
-    # 首先进行向量化
     # 修正关于时间的词
     query = replace_dates_in_sentence(query)
+    # 进行向量化
     emb = await emb_model.embedding_query(data=[query])
 
     """
@@ -447,11 +453,13 @@ async def similar_search_inf(user_role_id: str, query: str, db_name: str):
 
     # 若没有时间相关的词，就进行全数据表索引
     # 相似度检索，距离和索引的数据格式为：[[]]
+    ########要继续############
     try:
         distances, indexs = simi_search(user_role_id, emb[0])
         logging.info(f"搜索到的数据索引为{indexs}")
     except:
-        return False, []
+        logging.info(f"向量数据库检索失败。")
+        return False, "Vector database retrieval failed。"
 
     # 进行全数据表批量查询
     memory_db = await pool.acquire()

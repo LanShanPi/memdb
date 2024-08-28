@@ -1,7 +1,11 @@
 import pytz
 from datetime import datetime, timedelta
 import re
-
+from redis_domain.redis_processer import get_conversations,store_conversation
+import sys
+sys.path.append(r"/home/kuaipan/memdb/")
+from prompt_domain.llm_propmt import Judge_System,Splice_System
+from llm_domain.openai_llm import get_openai_response
 # chinese_to_digit、parse_relative_date、parse_weekday、parse_days_ago_or_after、parse_day_of_current_month、parse_next_month_day服务于replace_dates_in_sentence
 
 def get_time():
@@ -21,6 +25,25 @@ def get_time_scope(time_words):
         result.append([start_time.strftime('%Y-%m-%d %H:%M:%S'),end_time.strftime('%Y-%m-%d %H:%M:%S')])
     # 格式为[[start_time,end_time],[]]
     return result
+
+def imformation_processer(id,dialog):
+    # 先判断有没有重要信息，是否需要存储
+    important_or_not = get_openai_response(dialog,Judge_System)
+    if "无重要信息" in important_or_not:
+        # 此时不需要存储
+        return False,""
+    
+    # 根据id从redis中获取数据
+    num_conversations = 3
+    history = get_conversations(id, num_conversations)
+    # 对用户说的话进行完善
+    query = f"'user_history':{history},'user_new':{dialog}"
+    processed_dialog = get_openai_response(query,Splice_System)
+    # 将完善后的话存入redis
+    store_conversation(id,processed_dialog)
+    # 修正关于时间的词
+    time_dialog = replace_dates_in_sentence(processed_dialog)
+    return True,time_dialog
 
 
 # 将中文数字转换为阿拉伯数字的函数

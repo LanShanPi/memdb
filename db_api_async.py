@@ -155,11 +155,11 @@ async def similar_search(schema: SimilarDataSchema):
 # 提取的重要信息增、查
 @app.post("/insert_important_inf/")
 async def insert_important_inf(schema: InsertInfSchema):
-    mark = await db.insert_important_inf(schema.db_name, schema.user_role_id, schema.columns, schema.inf)
+    mark,response = await db.insert_important_inf(schema.db_name, schema.user_role_id, schema.columns, schema.inf)
     if mark:
-        return {"message": "Data inserted successfully."}
+        return {"data": response}
     else:
-        return {"message": f"The table {schema.user_role_id} not exist in database {schema.db_name}, you can create it first."}
+        return {"message": response}
 
 @app.post("/similar_search_inf/")
 async def similar_search_inf(schema: SimilarDataSchema):

@@ -10,10 +10,12 @@ def store_conversation(user_id, conversation):
     r.rpush(f"conversations:{user_id}", conversation)
 
 # 获取用户的固定数量的对话（从末尾开始）
-def get_conversations(user_id, num_conversations):
-    # # num_conversations=3，取出最近的3条对话
+def get_conversations(user_id, num_conversations=10):
+    # # num_conversations=3，取出最近的3条对话，默认取最近的10条数据
     # 获取列表的长度
     list_length = r.llen(f"conversations:{user_id}")
+    # 防止取的数据条数多于总数据条数
+    num_conversations = min(list_length,num_conversations)
     # 计算要提取的起始索引
     start = max(0, list_length - num_conversations)
     end = list_length - 1
@@ -29,4 +31,5 @@ def get_conversations(user_id, num_conversations):
 # store_conversation(user_id, "你好啊")
 # # 示例：获取用户最近的对话
 # num_conversations = 4  # 例如，取出最近的3条对话
+# # 列表格式["","",""]
 # result = get_conversations(user_id, num_conversations)
