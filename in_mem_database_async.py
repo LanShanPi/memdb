@@ -475,7 +475,6 @@ async def similar_search_inf(user_role_id: str, query: str, db_name: str):
             results = await cursor.fetchall()
             for i in range(len(results)):
                 response.append([results[i][1], str(distances[0][i])])
-
     finally:
             await pool.release(memory_db)
             logging.info(f"在内存数据表中搜索重要信息数据操作完成，释放内存数据库链接进链接池")

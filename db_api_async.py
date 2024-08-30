@@ -168,7 +168,7 @@ async def similar_search_inf(schema: SimilarDataSchema):
     if mark:
         return {"data": response}
     else:
-        return {"message": f"Has no dataset name {schema.db_name}, or table {schema.user_role_id} not in dataset {schema.db_name}, or vector dataset {schema.user_role_id + '.index'} has not build, please check again."}
+        return {"message": response}
 
 #################################################################
 # 其他
