@@ -33,7 +33,7 @@ curl -X PUT "http://42.123.114.119:8598/update_data/" -H "Content-Type: applicat
 # 查询数据（通过）
 curl -X POST "http://42.123.114.119:8598/select_data/" -H "Content-Type: application/json" -d '{"db_name": "birthdate","table_name": "caishen","condition": "id=h8da90rjgn"}'
 curl -X POST "http://42.123.114.119:8598/select_data/" -H "Content-Type: application/json" -d '{"db_name":"paipan_data_book","table_name":"paipan","condition":"DateTimeGender = '\''1998-06-19T5:00:00-男'\''"}'
-curl -X POST "http://42.123.114.119:8598/select_data/" -H "Content-Type: application/json" -d '{"db_name":"paipan_data_book","table_name":"paipan","condition":"DateTimeGender = '\''1998-06-19T5:00:00-男'\''", "sign": "True"}'
+curl -X POST "http://42.123.114.119:8598/select_data/" -H "Content-Type: application/json" -d '{"db_name":"paipan_data_book","table_name":"paipan","condition":"DateTimeGender = '\''1998-06-19T05:00:00-男'\''", "sign": "True"}'
 
 # 删除数据（通过）
 curl -X DELETE "http://42.123.114.119:8598/delete_data/" -H "Content-Type: application/json" -d '{"db_name": "information","table_name": "yu4","condition": "id="}'

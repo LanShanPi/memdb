@@ -1,7 +1,7 @@
 import redis
 
-# 连接 Redis 服务器
-r = redis.Redis(host='localhost', port=6379, db=0)
+# 连接 Redis 服务器（dify中的redis）
+r = redis.Redis(host='127.0.0.1', port=6379, db=0,password="Test123456")
 
 
 # 存储用户对话

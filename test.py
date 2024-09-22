@@ -412,16 +412,23 @@
 #                 "prompt":None
 #                 }
 
-import random
+# import random
 
-def random_selection(lst):
-    # 根据指定概率选择0或1
-    num_elements = random.choices([0, 1], weights=[0.4, 0.6])[0]
-    return random.sample(lst, num_elements)
+# def random_selection(lst):
+#     # 根据指定概率选择0或1
+#     num_elements = random.choices([0, 1], weights=[0.4, 0.6])[0]
+#     return random.sample(lst, num_elements)
 
-# 示例列表
-my_list = ['元素1', '元素2', '元素3', '元素4']
+# # 示例列表
+# my_list = ['元素1', '元素2', '元素3', '元素4']
 
-# 随机选择0或1个元素
-selected_elements = random_selection(my_list)
-print(selected_elements)
+# # 随机选择0或1个元素
+# selected_elements = random_selection(my_list)
+# print(selected_elements)
+
+import redis
+
+# 连接 Redis 服务器
+r = redis.Redis(host='127.0.0.1', port=6379, db=0,password="Test123456")
+r.ping()
+print("成功")
