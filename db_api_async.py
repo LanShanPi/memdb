@@ -1,5 +1,6 @@
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from db_schema import *
 from contextlib import asynccontextmanager
 from typing import List, Any
@@ -11,6 +12,15 @@ import logging
 import config
 
 app = FastAPI()
+
+# 配置 CORS 中间件
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 允许所有来源访问，或指定特定来源
+    allow_credentials=True,
+    allow_methods=["*"],  # 允许所有请求方法
+    allow_headers=["*"],  # 允许所有请求头
+)
 
 ################################################################
 # 初始化所有数据库
@@ -108,7 +118,7 @@ async def delete_data(schema: DeleteDataSchema):
 
 @app.post("/select_data/")
 async def select_data(schema: QueryDataSchema):
-    if "id" in schema.condition:
+    if "id" in schema.condition and schema.db_name == "birthdate":
         schema.condition = f"id = \"{schema.condition.split('=')[1]}\""
     logging.info(f"查询条件为：{schema.condition}")
     mark, results = await db.select_data(schema.db_name, schema.table_name, schema.condition)
