@@ -15,6 +15,6 @@ def delete_files_with_prefix(directory, prefix):
                 print(f"Failed to delete {file_path}. Reason: {e}")
 
 # 示例用法
-directory = "/home/kuaipan/memdb/"  # 替换为你的目录路径
+directory = "/home/ubuntu/memdb/"  # 替换为你的目录路径
 prefix = "file::"  # 替换为你的前缀字符串
 delete_files_with_prefix(directory, prefix)

@@ -22,8 +22,10 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s',
     handlers=[logging.StreamHandler()]  # 设定输出到控制台
 )
-emb_model = EmbeddingService()
-spacy_processer = spacy_process()
+############无模型暂时关闭
+# emb_model = EmbeddingService()
+# spacy_processer = spacy_process()
+
 
 # 检查数据库是否存在
 async def database_exists(db_name: str) -> bool:
@@ -33,6 +35,7 @@ async def database_exists(db_name: str) -> bool:
 # 检查数据表是否存在
 async def table_exists(db_name: str, table_name: str) -> bool:
     db_path = get_db_path(db_name)
+    # db_path = "/home/ubuntu/db_domain/liuyaox.db"
     async with aiosqlite.connect(db_path) as conn:
         await conn.execute('PRAGMA journal_mode=WAL')
         cursor = await conn.cursor()

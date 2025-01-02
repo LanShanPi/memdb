@@ -45,7 +45,6 @@ print(response.status_code)
 print(response.json())  # 如果返回的数据是JSON格式
 
 
-<<<<<<< HEAD
 # # 查询重要信息
 # url = "http://42.123.114.119:8598/similar_search_inf/"
 # headers = {"Content-Type": "application/json"}
@@ -70,11 +69,6 @@ url = "http://42.123.114.119:8598/select_data/"
 headers = {
     "Content-Type": "application/json"
 }
-=======
-# 查询重要信息
-url = "http://42.123.114.119:8598/similar_search_inf/"
-headers = {"Content-Type": "application/json"}
->>>>>>> 4354fe1a006e05a8294cd9db047fc0224262cf96
 data = {
     "db_name": "paipan_data_book",
     "table_name": "paipan",
@@ -82,16 +76,6 @@ data = {
 }
 
 response = requests.post(url, headers=headers, json=data)
-<<<<<<< HEAD
 
 # 打印响应内容
 print(response.text)
-=======
-# 如果需要查看响应
-status = response.status_code
-retrieval_result = response.json()  # 如果返回的数据是JSON格式
-# result 格式为：{'data': [['今天是我生日，我好开心', '1.6624228']]}
-if retrieval_result["data"]:
-    prompt_plus = f"注意！'data_add'是根据用户的话从数据库中检索到的数据，请先根据上下文判断这些数据对回复用户的话是否有用，若有用则根据这些数据进行回复，若无用则自己根据用户的话进行回复。data_add：{retrieval_result['data']}."
-print(prompt_plus)
->>>>>>> 4354fe1a006e05a8294cd9db047fc0224262cf96

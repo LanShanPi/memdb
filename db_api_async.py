@@ -13,6 +13,16 @@ import config
 
 app = FastAPI()
 
+# from contextlib import asynccontextmanager
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     # 在应用启动时初始化数据库
+#     await initialize_all_memory_dbs(config.get_db_inf())
+#     logging.info("服务启动，所有内存数据库初始化完成.")
+#     yield  # 在此处返回控制权，应用启动继续执行
+#     # 可在此添加应用关闭时的清理逻辑（可选）
+# app = FastAPI(lifespan=lifespan)
+
 # 配置 CORS 中间件
 app.add_middleware(
     CORSMiddleware,
@@ -28,6 +38,9 @@ app.add_middleware(
 async def startup_event():
     await initialize_all_memory_dbs(config.get_db_inf())
     logging.info("服务启动，所有内存数据库初始化完成.")
+
+
+
 
 # @app.on_event("shutdown")
 # async def shutdown_event():
@@ -196,4 +209,4 @@ if __name__ == "__main__":
     format='%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s',
     handlers=[logging.StreamHandler()]  # 设定输出到控制台
 )
-    uvicorn.run(app, host="0.0.0.0", port=8598)
+    uvicorn.run(app, host="0.0.0.0", port=3389)
