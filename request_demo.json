@@ -40,3 +40,10 @@ curl -X DELETE "http://42.123.114.119:8598/delete_data/" -H "Content-Type: appli
 
 # 判断信息重要性
 curl --location 'http://42.123.114.119:8597/chat/' --header 'Content-Type: application/json' --data '{"input":"昨天我去了虹口体育场"}'
+
+
+
+
+curl -X POST "http://101.36.118.251:8000/select_data/" -H "Content-Type: application/json" -d '{"db_name":"paipan_data_book","table_name":"paipan","condition":"DateTimeGender = '\''1998-06-19T5:00:00-男'\''"}'
+curl -X POST "http://101.36.118.251:8000/select_data/" -H "Content-Type: application/json" -d '{"db_name": "birthdate","table_name": "caishen","condition": "id=h8da0xaxrgn"}'
+curl -X POST "http://101.36.118.251:8000/insert_data/" -H "Content-Type: application/json" -d '{"db_name": "birthdate","table_name": "caishen","columns": "id,information,time","values": "哒哒哒哒哒,甲乙丙丁戊己庚辛"}'

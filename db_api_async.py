@@ -209,4 +209,4 @@ if __name__ == "__main__":
     format='%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s',
     handlers=[logging.StreamHandler()]  # 设定输出到控制台
 )
-    uvicorn.run(app, host="0.0.0.0", port=3389)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
