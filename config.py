@@ -1,7 +1,7 @@
 import os
 
 # 数据库存储根目录
-Database_Root_Path = "/home/kuaipan/disk1/db_domain/"
+Database_Root_Path = "/data/hongzhili/db_domain/"
 # 向量模型地址
 Embedding_Model_Path = "/home/kuaipan/model/bgelarge/bge-large-zh-v1.5"
 # faiss索引根目录
@@ -21,7 +21,7 @@ def get_db_path(db_name):
 # 服务于内存数据库初始化
 def get_db_inf():
     db_paths = {}
-    directory_path = "/home/kuaipan/disk1/db_domain/"
+    directory_path = "/data/hongzhili/db_domain/"
     files_and_folders = os.listdir(directory_path)
     for i in range(len(files_and_folders)):
         db_paths[files_and_folders[i].split(".")[0]] = directory_path+files_and_folders[i]
